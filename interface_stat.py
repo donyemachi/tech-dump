@@ -65,9 +65,13 @@ df = pd.DataFrame(dev_info, columns=list(dev_info.keys()))
 df11 = copy.deepcopy(df)
 #df11['Intf_status'] = df11.apply(lambda row: row['Intf_status'] == row['status'], axis=1).astype(int)
 
+#df['status'].astype(str)
+df['status'].astype(str).replace(to_replace=interface_status, inplace=True)
+
 df11['port_status'] = df['status'].astype(str)
 df11['port_status'].replace(to_replace=interface_status, inplace=True)
-df9 = df11.set_index('port_status')
+df12 = df11[df11.columns[~df11.columns.isin(['status', 'mac-address'])]]
+df9 = df.set_index('status')
 #df7 = df.groupby('status')[['interface', 'Flap']].rename({'Flap': 'Last_interface_Flap'},axis = 'columns')
 df6['vlan name'] = df6['vlan']
 
@@ -89,6 +93,6 @@ with pd.ExcelWriter(file,  engine='xlsxwriter') as writer3:
     df.to_excel(writer3, sheet_name="Raw_Interf_Data", index=False)
     df6.to_excel(writer3, sheet_name="user_Details", index=False)
     df11.to_excel(writer3, sheet_name="port status", index=True)
-    df4.to_excel(writer3, sheet_name="users_count", index=True)
+    df12.to_excel(writer3, sheet_name="users_count", index=True)
     df9.to_excel(writer3, sheet_name="status_count3", index=True)
 
